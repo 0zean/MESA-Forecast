@@ -6,6 +6,7 @@ import pandas as pd
 import yaml
 from alpha_vantage.timeseries import TimeSeries
 from memspectrum import MESA
+from sklearn.linear_model import LinearRegression
 
 api = getcwd() + "/api-key.yaml"
 
@@ -15,23 +16,37 @@ with open(api, "r") as file:
 ts = TimeSeries(key=key['key'], output_format="pandas")
 data, _ = ts.get_intraday('SPY', interval='5min', outputsize='full')
 
-
 price = data["4. close"].iloc[::-1]
+
+
+# End-point Flattening function
+def EPF(data):
+    a = data[0]
+    b = (data[len(data)-1] - a) / (len(data)-1)
+
+    y = np.zeros(len(data))
+    for i in range(len(data)):
+        y[i] = data[i] - (a + b * (i))
+    return y
+
+
+price = EPF(price)
 
 N, dt = len(price), 1
 
 time = np.arange(0, N) * dt
 
 M = MESA()
-M.solve(price[:-100])
+h = -100
+M.solve(price[:h])
 
-forecast = M.forecast(price[:-100], length=100, number_of_simulations=1000, include_data=False)
+forecast = M.forecast(price[:h], length=100, number_of_simulations=1000, include_data=False)
 median = np.median(forecast, axis=0)
 
 p5, p95 = np.percentile(forecast, (5, 95), axis=0)
 
-plt.plot(time[:-100], price[:-100], color='k')
-plt.fill_between(time[-100:], p5, p95, color='b', alpha=.5, label='90% Cr.')
-plt.plot(time[-100:], price[-100:], color='k', linestyle='-.', label='Observed Data')
-plt.plot(time[-100:], median, color='r', label='Median Estimate')
+plt.plot(time[:h], price[:h], color='k')
+plt.fill_between(time[h:], p5, p95, facecolor='turquoise',alpha=0.5, label='90% Cr.')
+plt.plot(time[h:], price[h:], color='k', linestyle='-.', label='Observed Data')
+plt.plot(time[h:], median, color='r', label='Median Estimate')
 plt.show()
