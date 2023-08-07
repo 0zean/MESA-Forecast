@@ -2,11 +2,9 @@ from os import getcwd
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import yaml
 from alpha_vantage.timeseries import TimeSeries
 from memspectrum import MESA
-from sklearn.linear_model import LinearRegression
 
 api = getcwd() + "/api-key.yaml"
 
@@ -40,7 +38,11 @@ M = MESA()
 h = -100
 M.solve(price[:h])
 
-forecast = M.forecast(price[:h], length=100, number_of_simulations=1000, include_data=False)
+forecast = M.forecast(price[:h],
+                      length=100,
+                      number_of_simulations=1000,
+                      include_data=False)
+
 median = np.median(forecast, axis=0)
 
 p5, p95 = np.percentile(forecast, (5, 95), axis=0)
