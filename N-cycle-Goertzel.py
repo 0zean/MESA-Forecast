@@ -5,10 +5,10 @@ import numpy as np
 import pandas as pd
 import yaml
 from alpha_vantage.timeseries import TimeSeries
-from numba import jit
+# from numba import jit
 
 from goertzel import Goertzel as G
-from timer import Timer
+# from timer import Timer
 
 api = getcwd() + "/api-key.yaml"
 
