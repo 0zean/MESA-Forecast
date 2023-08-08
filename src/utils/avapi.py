@@ -41,7 +41,7 @@ class AlphaVantage():
         Parameters
         ----------
         month : _str_,
-            which month to get data from e.g., `'2023-01'`.
+            which year-month to get data from e.g., `'2023-01'`.
 
         Returns
         -------
