@@ -73,13 +73,13 @@ if __name__=="__main__":
     amp, phase = G.goertzelIIR()
     print(f'GoertzelIIR Amp: {amp:.4f}, phase: {phase:.4f}')
 
-    tt = np.fft.fft(y)
-    test = pd.DataFrame()
-    test['amp'] = np.sqrt(tt.real**2 + tt.imag**2) / (len(y) / 2)
-    test['freq'] = np.fft.fftfreq(tt.size, d=1)
-    test['phase'] = np.arctan2(tt.imag, tt.real)
+    ft = np.fft.fft(y)
+    FFT = pd.DataFrame()
+    FFT['amp'] = np.sqrt(ft.real**2 + ft.imag**2) / (len(y) / 2)
+    FFT['freq'] = np.fft.fftfreq(ft.size, d=1)
+    FFT['phase'] = np.arctan2(ft.imag, ft.real)
 
-    max_ = test.iloc[test['amp'].idxmax()]
+    max_ = FFT.iloc[FFT['amp'].idxmax()]
     print(f'FFT amp: {max_["amp"]:.4f}, '
           f'phase: {max_["phase"]:.4f}, '
           f'freq: {max_["freq"]:.4f}')
