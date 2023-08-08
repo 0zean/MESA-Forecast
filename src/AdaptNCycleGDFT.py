@@ -5,8 +5,8 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from .utils.avapi import AlphaVantage as av
-from .utils.goertzel import Goertzel as G
+from utils.avapi import AlphaVantage as av
+from utils.goertzel import Goertzel as G
 
 # from numba import jit
 # from timer import Timer
