@@ -62,14 +62,16 @@ if __name__=="__main__":
     x = np.arange(0, 512)
     y = wave(1, 1/128, 0, x)
 
-    amp, phase = Goertzel(y, 1/128).goertzel()
-    print(f'Goertzel Amp: {amp:.4f}, phase{phase:.4f}')
+    G = Goertzel(y, 1/128)
 
-    amp, phase = Goertzel(y, 1/128).goertzelFFT()
-    print(f'GoertzelFFT Amp: {amp:.4f}, phase{phase:.4f}')
+    amp, phase = G.goertzel()
+    print(f'Goertzel Amp: {amp:.4f}, phase: {phase:.4f}')
 
-    amp, phase = Goertzel(y, 1/128).goertzelIIR()
-    print(f'GoertzelIIR Amp: {amp:.4f}, phase{phase:.4f}')
+    amp, phase = G.goertzelFFT()
+    print(f'GoertzelFFT Amp: {amp:.4f}, phase: {phase:.4f}')
+
+    amp, phase = G.goertzelIIR()
+    print(f'GoertzelIIR Amp: {amp:.4f}, phase: {phase:.4f}')
 
     tt = np.fft.fft(y)
     test = pd.DataFrame()
