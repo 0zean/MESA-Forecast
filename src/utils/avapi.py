@@ -101,7 +101,8 @@ class AlphaVantage():
                 data_df = data_df.astype(float)
                 data_frames.append(data_df[::-1])
             
-            current_date += relativedelta(months=1)  # Move to the next month
+            # Move to the next month
+            current_date += relativedelta(months=1)
 
             if current_date > end_date:
                 break
@@ -110,4 +111,4 @@ class AlphaVantage():
             final_dataframe = pd.concat(data_frames)
             return final_dataframe
         else:
-            return None  # No data retrieved
+            return None
