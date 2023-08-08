@@ -5,12 +5,11 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from utils.avapi import AlphaVantage as av
-from utils.goertzel import Goertzel as G
+from .utils.avapi import AlphaVantage as av
+from .utils.goertzel import Goertzel as G
 
 # from numba import jit
 # from timer import Timer
-
 api = getcwd() + "/api-key.yaml"
 
 with open(api, "r") as file:
@@ -31,6 +30,8 @@ print(stock)
 
 
 close = stock["4. close"]
+plt.plot(close.values)
+plt.show()
 
 day = '2023-07-05'
 bar_count = close.resample('D').count().get(day)
