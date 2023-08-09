@@ -1,15 +1,26 @@
 import numpy as np
 import pandas as pd
-from scipy.signal import lfilter
+from numba import float64
+from numba.experimental import jitclass
+# from scipy.signal import lfilter
 
 
+spec = [
+    ('x', float64[:]),
+    ('f', float64),
+    ('N', float64),
+    ('k', float64)
+]
+
+
+@jitclass(spec)
 class Goertzel:
     def __init__(self, x, f):
         self.x = x
         self.f = f
         self.N = len(self.x)
         self.k = int(f * self.N)
-    
+        
     # Goertzel algorithm implementation
     def goertzel(self):
         w = 2 * np.pi * self.k / self.N
@@ -29,19 +40,26 @@ class Goertzel:
         amp = np.sqrt(ip**2 + qp**2) / (self.N / 2)
         phase = np.arctan2(qp, ip)
         return amp, phase
-    
+
     # Goertzel as the k-th coefficient of an N-point FFT
-    def goertzelFFT(self):
-        y = np.fft.fft(self.x)
-        ip = np.real(y[self.k])
-        qp = np.imag(y[self.k])
+    # def goertzelFFT(self):
+    #     y = np.fft.fft(self.x)
+    #     ip = np.real(y[self.k])
+    #     qp = np.imag(y[self.k])
         
-        amp = np.sqrt(ip**2 + qp**2) / (self.N / 2)
-        phase = np.arctan2(qp, ip)
-        return amp, phase
-    
+    #     amp = np.sqrt(ip**2 + qp**2) / (self.N / 2)
+    #     phase = np.arctan2(qp, ip)
+    #     return amp, phase
+
     # Goertzel as an IIR filter
     def goertzelIIR(self):
+        
+        def lfilter(b, a, s):
+            y = np.zeros_like(s)
+            for n in range(len(s)):
+                y[n] = np.dot(b, s[n::-1]) - np.dot(a[1:], y[n-1:0:-1])
+            return y
+        
         W = np.exp(1j * 2 * np.pi * self.k / self.N)
         c = 2 * np.cos(2 * np.pi * self.k / self.N)
         b = [W, -1, 0]  # FIR coefficients
@@ -52,7 +70,7 @@ class Goertzel:
         
         amp = np.sqrt(ip**2 + qp**2) / (self.N / 2)
         phase = np.arctan2(qp, ip)
-        return amp, phase
+        return amp, phase 
 
 if __name__=="__main__":
     # Check to see if Goertzel output = FFT output
@@ -67,8 +85,8 @@ if __name__=="__main__":
     amp, phase = G.goertzel()
     print(f'Goertzel Amp: {amp:.4f}, phase: {phase:.4f}')
 
-    amp, phase = G.goertzelFFT()
-    print(f'GoertzelFFT Amp: {amp:.4f}, phase: {phase:.4f}')
+    # amp, phase = G.goertzelFFT()
+    # print(f'GoertzelFFT Amp: {amp:.4f}, phase: {phase:.4f}')
 
     amp, phase = G.goertzelIIR()
     print(f'GoertzelIIR Amp: {amp:.4f}, phase: {phase:.4f}')
