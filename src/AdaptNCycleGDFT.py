@@ -4,12 +4,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import yaml
+from goertzel_cython import Goertzel as G
 
 from utils.avapi import AlphaVantage as av
-from utils.goertzel import Goertzel as G
 from utils.timer import Timer
-
-# from numba import jit
 
 api = getcwd() + "/api-key.yaml"
 
@@ -27,15 +25,11 @@ data = av(function='TIME_SERIES_INTRADAY',
 
 stock = data.get_extended_data(start_date='2023-05', end_date='2023-08')
 
-print(stock)
-
 close = stock["4. close"]
-plt.plot(close.values)
-plt.show()
 
-day = '2023-07-05'
-bar_count = close.resample('D').count().get(day)
-print(bar_count)
+# day = '2023-07-05'
+# bar_count = close.resample('D').count().get(day)
+# print(bar_count)
 
 
 # End-point Flattening function
@@ -93,6 +87,9 @@ def rolling_window(data, window, n):
     return fpk, epk
 
 
+x = np.arange(0, 100)
+y = 1 * np.sin(2*np.pi * 1/16 * x + 1)
+
 t = Timer()
 t.start()
 
@@ -110,7 +107,7 @@ for k in range(len(curve)):
 
 
 fig, (ax1, ax2) = plt.subplots(2)
-fig.suptitle('Original + Indicator')
+fig.suptitle('Stock + Goertzel Indicator')
 ax1.plot(close[780:].values)
 ax2.plot(sumv)
-fig.show()
+plt.show()
