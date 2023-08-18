@@ -1,6 +1,0 @@
-goertzel_cython.c
-setup.py
-fastgoertzel.egg-info/PKG-INFO
-fastgoertzel.egg-info/SOURCES.txt
-fastgoertzel.egg-info/dependency_links.txt
-fastgoertzel.egg-info/top_level.txt
