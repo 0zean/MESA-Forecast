@@ -1,15 +1,17 @@
-from os import getcwd
+import os
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import yaml
-from goertzel_cython import Goertzel as G
+from lightgoertzel import goertzel as lg
 
 from utils.avapi import AlphaVantage as av
 from utils.timer import Timer
 
-api = getcwd() + "/api-key.yaml"
+api = os.getcwd() + "/api-key.yaml"
 
 with open(api, "r") as file:
     key = yaml.safe_load(file)
@@ -23,10 +25,21 @@ data = av(function='TIME_SERIES_INTRADAY',
           outputsize='full',
           apikey=key['key'])
 
-stock = data.get_extended_data(start_date='2023-05', end_date='2023-08')
+
+# Check if stored data is up to date
+if os.path.exists("data\data.csv"):
+    stock = pd.read_csv("data\data.csv", index_col=0, parse_dates=True)
+    print(stock.index[-1])
+    
+    if stock.index[-1].strftime("%Y-%m-%D") != datetime.now().strftime("%Y-%m-%D"):
+        stock = data.get_extended_data(start_date='2023-05', end_date='2023-08')
+else:
+    stock = data.get_extended_data(start_date='2023-05', end_date='2023-08')
+
 
 close = stock["4. close"]
 
+# Check how many price 'bars' in a single day
 # day = '2023-07-05'
 # bar_count = close.resample('D').count().get(day)
 # print(bar_count)
@@ -43,7 +56,7 @@ def EPF(data):
     return y
 
 
-freq_bin = [1/i for i in range(6, 390)]
+freq_bin = [1/i for i in range(6, 391)]
 
 
 def rolling_window(data, window, n):
@@ -60,7 +73,7 @@ def rolling_window(data, window, n):
         ff = EPF(newdata)
 
         # Step 2: For each frequency, calculate goertzel amplitude and phase
-        amp_bin, phase_bin = map(list, zip(*[G(ff, f).goertzel() for f in freq_bin]))
+        amp_bin, phase_bin = map(list, zip(*[lg(ff, f) for f in freq_bin]))
 
         filters = pd.DataFrame({'a': amp_bin, 'f': freq_bin, 'p': phase_bin})
 
@@ -91,10 +104,9 @@ x = np.arange(0, 100)
 y = 1 * np.sin(2*np.pi * 1/16 * x + 1)
 
 t = Timer()
+
 t.start()
-
 fpk, epk = rolling_window(close, 780, 10)
-
 t.stop()
 
 # Step 5: calculate velocity between fp(k) and ep(k) recursively
