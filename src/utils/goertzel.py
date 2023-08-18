@@ -1,8 +1,36 @@
 import numpy as np
 import pandas as pd
-from numba import float64
+from numba import float64, njit
 from numba.experimental import jitclass
 # from scipy.signal import lfilter
+
+
+@njit(nogil=True)
+def goertzel_optimized(x, f):
+    N = len(x)
+    k = int(f * N)
+
+    w = 2 * np.pi * k / N
+    cw = np.cos(w)
+    c = 2 * cw
+    sw = np.sin(w)
+    z1, z2 = 0.0, 0.0
+    
+    ip = 0.0
+    qp = 0.0
+    
+    for n in range(N):
+        z0 = x[n] + c * z1 - z2
+        z2 = z1
+        z1 = z0
+        
+    ip = cw * z1 - z2
+    qp = sw * z1
+    
+    amp = np.sqrt(ip**2 + qp**2) / (N / 2)
+    phase = np.arctan2(qp, ip)
+    
+    return amp, phase
 
 
 spec = [
@@ -85,11 +113,11 @@ if __name__=="__main__":
     amp, phase = G.goertzel()
     print(f'Goertzel Amp: {amp:.4f}, phase: {phase:.4f}')
 
-    # amp, phase = G.goertzelFFT()
-    # print(f'GoertzelFFT Amp: {amp:.4f}, phase: {phase:.4f}')
+    amp, phase = goertzel_optimized(y, 1/128)
+    print(f'GoertzelFFT Amp: {amp:.4f}, phase: {phase:.4f}')
 
-    amp, phase = G.goertzelIIR()
-    print(f'GoertzelIIR Amp: {amp:.4f}, phase: {phase:.4f}')
+    # amp, phase = G.goertzelIIR()
+    # print(f'GoertzelIIR Amp: {amp:.4f}, phase: {phase:.4f}')
 
     ft = np.fft.fft(y)
     FFT = pd.DataFrame()

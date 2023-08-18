@@ -109,6 +109,7 @@ class AlphaVantage():
         
         if data_frames:
             final_dataframe = pd.concat(data_frames)
+            final_dataframe.to_csv('data\data.csv', index=True)
             return final_dataframe
         else:
             return None
