@@ -99,9 +99,6 @@ def rolling_window(data, window, n):
     return fpk, epk
 
 
-x = np.arange(0, 100)
-y = 1 * np.sin(2*np.pi * 1/16 * x + 1)
-
 t = Timer()
 
 t.start()
