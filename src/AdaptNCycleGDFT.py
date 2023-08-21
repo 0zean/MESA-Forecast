@@ -148,7 +148,7 @@ def process_spot2(i, data, window, n, freq_bin):
     bin = np.column_stack((amp_bin, freq_bin, phase_bin))
 
     # Step 3: Filter for the top n frequencies and phases by amplitude
-    idx = np.flip(np.argsort(bin[:,0]))[:n]
+    idx = np.argsort(bin[:,0])[-n:]
 
     top_amp = bin[idx, 0]
     top_freq = bin[idx, 1]
