@@ -1,7 +1,6 @@
 import os
 from datetime import datetime
 import multiprocessing
-import heapq
 
 import fastgoertzel as G
 import matplotlib.pyplot as plt
