@@ -1,6 +1,0 @@
-goertzel_cython.c
-setup.py
-goertzel_cython.egg-info/PKG-INFO
-goertzel_cython.egg-info/SOURCES.txt
-goertzel_cython.egg-info/dependency_links.txt
-goertzel_cython.egg-info/top_level.txt
