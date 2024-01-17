@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import yaml
-from lightgoertzel import goertzel as lg
 
 from utils.avapi import AlphaVantage as av
 from utils.timer import Timer
