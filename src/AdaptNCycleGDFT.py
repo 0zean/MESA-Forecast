@@ -27,14 +27,16 @@ data = av(function='TIME_SERIES_INTRADAY',
 
 
 # Check if stored data is up to date
+current_date = datetime.now()
+
 if os.path.exists("data\data.csv"):
     stock = pd.read_csv("data\data.csv", index_col=0, parse_dates=True)
     print(stock.index[-1])
     
-    # if stock.index[-1].strftime("%Y-%m-%D") != datetime.now().strftime("%Y-%m-%D"):
-    #     stock = data.get_extended_data(start_date='2023-05', end_date='2023-08')
+    if stock.index[-1].strftime("%Y-%m") != current_date.strftime("%Y-%m"):
+        stock = data.get_extended_data(start_date='2023-05', end_date=current_date.strftime("%Y-%m"))
 else:
-    stock = data.get_extended_data(start_date='2023-05', end_date='2023-08')
+    stock = data.get_extended_data(start_date='2023-05', end_date=current_date.strftime("%Y-%m"))
 
 
 close = stock["4. close"]
