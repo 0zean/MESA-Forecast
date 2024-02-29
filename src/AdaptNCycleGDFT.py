@@ -140,7 +140,7 @@ def process_spot2(i, data, window, n, freq_bin):
     newdata = data[i:(i + window)]
 
     # Step 1: Endpoint flatten the windowed data
-    ff = EPF(newdata)
+    ff = EPF(np.array(newdata))
 
     # Step 2: For each frequency, calculate goertzel amplitude and phase
     amp_bin, phase_bin = zip(*[G.goertzel(ff, f) for f in freq_bin])
