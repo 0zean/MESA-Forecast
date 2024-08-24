@@ -1,0 +1,1 @@
+# Adaptive N Goertzel Algorithm Trading Strategy 
